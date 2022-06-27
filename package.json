@@ -1,0 +1,50 @@
+{
+  "name": "keepalive-extend",
+  "version": "0.1.0",
+  "private": false,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build:lib": "vue-cli-service build --target lib --name index lib/index.js",
+    "test": "vue-cli-service test:unit",
+    "test:watch": "vue-cli-service test:unit --watch",
+    "test:cov": "vue-cli-service test:unit --coverage",
+    "lint": "vue-cli-service lint",
+    "rm": "rimraf dist/demo.html",
+    "prepublishOnly": "npm run build:lib && npm run rm"
+  },
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "keywords": ["vue", "keep-alive"],
+  "main": "dist/index.common.js",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "author": {
+    "name": "frontendway"
+  },
+  "dependencies": {
+    "core-js": "^3.6.5",
+    "vue": "^2.6.11",
+    "vue-router": "^3.2.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.4.6",
+    "@vue/cli-plugin-eslint": "~4.4.6",
+    "@vue/cli-plugin-router": "~4.4.6",
+    "@vue/cli-plugin-unit-jest": "~4.4.6",
+    "@vue/cli-service": "~4.4.6",
+    "@vue/eslint-config-standard": "^5.1.2",
+    "@vue/test-utils": "^1.0.3",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "eslint-plugin-vue": "^6.2.2",
+    "rimraf": "^3.0.2",
+    "vue-template-compiler": "^2.6.11"
+  }
+}
