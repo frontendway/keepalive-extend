@@ -5,12 +5,13 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build:lib": "vue-cli-service build --target lib --name index lib/index.js",
+    "build": "npm run build:lib && npm run rm",
     "test": "vue-cli-service test:unit",
     "test:watch": "vue-cli-service test:unit --watch",
     "test:cov": "vue-cli-service test:unit --coverage",
     "lint": "vue-cli-service lint",
     "rm": "rimraf dist/demo.html",
-    "prepublishOnly": "npm run build:lib && npm run rm"
+    "prepublishOnly": "npm run build"
   },
   "files": [
     "dist",
