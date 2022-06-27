@@ -21,6 +21,13 @@ let routes = null
 let el = null
 let vm = null
 
+const Page = {
+  name: 'page',
+  template: '<div>page</div>',
+  created: jest.fn(),
+  destroyed: jest.fn()
+}
+
 Vue.use(VueRouter)
 Vue.use(KeepaliveExtend)
 
@@ -142,6 +149,11 @@ beforeEach(() => {
       path: '/shop',
       name: 'shop',
       component: Shop
+    },
+    {
+      path: '/cart',
+      name: 'cart',
+      component: () => import('./Cart.vue')
     }
   ]
 })
@@ -180,6 +192,45 @@ async () => {
   await router.push('/login')
   expect(vm.$el.textContent).toBe('login')
   expect(fnCreatedCallsCount(Login)).toBe(1)
+})
+
+it('include 非字符串，数组，正则 场景', async () => {
+  router = new VueRouter({ routes })
+
+  await router.push('/login')
+  vm = new Vue({
+    router,
+    template: `
+      <keepalive-extend
+        unique-key="app"
+        :include="{}"
+      >
+        <router-view />
+      </keepalive-extend>
+    `
+  }).$mount(el)
+  expect(vm.$el.textContent).toBe('login')
+  expect(fnCreatedCallsCount(Login)).toBe(1)
+
+  await router.push('/home')
+  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(fnCreatedCallsCount(Home)).toBe(1)
+
+  await router.push('/search')
+  expect(vm.$el.textContent).toBe('search')
+  expect(fnCreatedCallsCount(Search)).toBe(1)
+
+  await router.push('/home')
+  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(fnCreatedCallsCount(Home)).toBe(2)
+
+  await router.push('/login')
+  expect(vm.$el.textContent).toBe('login')
+  expect(fnCreatedCallsCount(Login)).toBe(2)
+
+  await router.push('/search')
+  expect(vm.$el.textContent).toBe('search')
+  expect(fnCreatedCallsCount(Search)).toBe(2)
 })
 
 it('include string 场景', async () => {
@@ -391,6 +442,37 @@ it('include array [string|regExp|array] 混合场景', async () => {
   await router.push('/detail')
   expect(vm.$el.textContent).toBe('detail')
   expect(fnCreatedCallsCount(Detail)).toBe(3)
+})
+
+it('exclude 为非字符串，正则，数组场景', async () => {
+  router = new VueRouter({ routes })
+
+  await router.push('/login')
+  vm = new Vue({
+    router,
+    template: `
+      <keepalive-extend
+        unique-key="app"
+        :exclude="{}"
+      >
+        <router-view />
+      </keepalive-extend>
+    `
+  }).$mount(el)
+  expect(vm.$el.textContent).toBe('login')
+  expect(fnCreatedCallsCount(Login)).toBe(1)
+
+  await router.push('/home')
+  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(fnCreatedCallsCount(Home)).toBe(1)
+
+  await router.push('/login')
+  expect(vm.$el.textContent).toBe('login')
+  expect(fnCreatedCallsCount(Login)).toBe(1)
+
+  await router.push('/home')
+  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(fnCreatedCallsCount(Home)).toBe(1)
 })
 
 it('exclude string 场景', async () => {
@@ -1416,4 +1498,55 @@ it('插槽中没有组件场景', () => {
     `
   }).$mount(el)
   expect(vm.$el.textContent).toBe('has p')
+})
+
+it('异步组件', async () => {
+  vm = new Vue({
+    router,
+    template: `
+      <keepalive-extend
+        unique-key="app"
+      >
+        <my-component />
+      </keepalive-extend>
+    `,
+    components: {
+      'my-component': () => import('./Cart.vue')
+    }
+  }).$mount(el)
+  await vm.$nextTick(() => {
+    expect(vm.$el.textContent).toBe('cart')
+  })
+})
+
+it('无插槽场景', async () => {
+  vm = new Vue({
+    router,
+    template: `
+      <keepalive-extend
+        unique-key="app"
+      >
+      </keepalive-extend>
+    `
+  }).$mount(el)
+
+  expect(vm.$el.textContent).toBe('')
+})
+
+it('手动给组件指定 key', async () => {
+  vm = new Vue({
+    router,
+    template: `
+      <keepalive-extend
+        unique-key="app"
+      >
+        <page key="page" />
+      </keepalive-extend>
+    `,
+    components: {
+      page: Page
+    }
+  }).$mount(el)
+
+  expect(vm.$el.textContent).toBe('page')
 })

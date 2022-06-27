@@ -2,7 +2,7 @@
   <div id="app">
     <keepalive-extend
       unique-key="app"
-      exclude="home"
+      :exclude="/home/"
     >
       <router-view />
     </keepalive-extend>
