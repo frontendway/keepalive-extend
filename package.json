@@ -16,7 +16,10 @@
     "dist",
     "lib"
   ],
-  "keywords": ["vue", "keep-alive"],
+  "keywords": [
+    "vue",
+    "keep-alive"
+  ],
   "main": "dist/index.common.js",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
@@ -38,6 +41,7 @@
     "@vue/eslint-config-standard": "^5.1.2",
     "@vue/test-utils": "^1.0.3",
     "babel-eslint": "^10.1.0",
+    "codecov": "^3.8.3",
     "eslint": "^6.7.2",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-node": "^11.1.0",
