@@ -19,6 +19,7 @@ let Shop = null
 let router = null
 let routes = null
 let el = null
+let vm = null
 
 Vue.use(VueRouter)
 Vue.use(KeepaliveExtend)
@@ -145,6 +146,10 @@ beforeEach(() => {
   ]
 })
 
+afterEach(() => {
+  vm.$destroy()
+})
+
 it(`
   1. 只配置 unique-key 场景
   2. 渲染登录页面，登录页面 created 钩子被调用
@@ -155,7 +160,7 @@ async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -181,7 +186,7 @@ it('include string 场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -224,7 +229,7 @@ it('include regExp 场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -255,7 +260,7 @@ it('include array string 场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -302,7 +307,7 @@ it('include array regExp 场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -337,7 +342,7 @@ it('include array [string|regExp|array] 混合场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -392,7 +397,7 @@ it('exclude string 场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -435,7 +440,7 @@ it('exclude regExp 场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -470,7 +475,7 @@ it('exclude array string 场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -509,7 +514,7 @@ it('exclude array regExp 场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -548,7 +553,7 @@ it('exclude array [string|regExp|array] 混合场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -595,7 +600,7 @@ it('max', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -630,7 +635,7 @@ it('rules refresh string 场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -684,7 +689,7 @@ it('rules refresh regExp 场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -730,7 +735,7 @@ it('rules refresh array string 场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -784,7 +789,7 @@ it('rules refresh array regExp 场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -838,7 +843,7 @@ it('rules refresh array [string|regExp|array] 混合场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -900,7 +905,7 @@ it('rules notRefresh string 场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -962,7 +967,7 @@ it('rules notRefresh array 场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -1024,7 +1029,7 @@ it('rules notRefresh regExp 场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -1086,7 +1091,7 @@ it('嵌套 keepalive-extend 不配置 keep-active 场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -1155,7 +1160,7 @@ it('嵌套 keepalive-extend 配置 keep-active 场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -1235,7 +1240,7 @@ it('嵌套 keepalive-extend 配置 keep-active，有 rules 场景', async () => 
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -1284,7 +1289,7 @@ it('watch include', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -1346,7 +1351,7 @@ it('destroyed 无 keepActive', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -1374,7 +1379,7 @@ it('destroyed 有 keepActive', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend
@@ -1400,7 +1405,7 @@ it('destroyed 有 keepActive', async () => {
 })
 
 it('插槽中没有组件场景', () => {
-  const vm = new Vue({
+  vm = new Vue({
     router,
     template: `
       <keepalive-extend

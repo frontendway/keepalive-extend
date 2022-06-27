@@ -4,8 +4,7 @@
       unique-key="app"
       exclude="home"
     >
-      <p>pppp</p>
-      <strong>strong</strong>
+      <router-view />
     </keepalive-extend>
   </div>
 </template>
