@@ -49,7 +49,7 @@ Vue.use(KeepaliveExtend)
 |   property  |                description                 |      type        | required |
 |     ----    |                    ----                    |      ----        |   ----   |
 | unique-key  |             unique key value               |     string       |   true   |
-| keep-active |    whether to persistent cache             |     string       |   false  |
+| keep-active |    whether to persistent cache             |     boolean      |   false  |
 |    rules    | whether the target page refreshes the rule |     object       |   false  |
 |   include   |    consistent with that of keep-alive      |     string       |   false  |
 |   exclude   |    consistent with that of keep-alive      |     string       |   false  |

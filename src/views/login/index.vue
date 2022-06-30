@@ -6,7 +6,10 @@
 
 <script>
 export default {
-  name: 'login'
+  name: 'login',
+  created () {
+    console.log('login')
+  }
 }
 </script>
 
