@@ -5,6 +5,7 @@
   <img src="https://img.shields.io/codecov/c/github/frontendway/keepalive-extend/master">
   <img src="https://img.shields.io/github/size/frontendway/keepalive-extend/dist/index.umd.min.js">
   <img src="https://img.shields.io/github/license/frontendway/keepalive-extend">
+  <img src="https://img.shields.io/npm/v/keepalive-extend">
 </p>
 
 ### Brief Introduction
