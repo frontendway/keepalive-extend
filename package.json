@@ -1,6 +1,6 @@
 {
   "name": "keepalive-extend",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -29,12 +29,10 @@
     "name": "frontendway"
   },
   "license": "MIT",
-  "dependencies": {
+  "devDependencies": {
     "core-js": "^3.6.5",
     "vue": "^2.6.11",
-    "vue-router": "^3.2.0"
-  },
-  "devDependencies": {
+    "vue-router": "^3.2.0",
     "@vue/cli-plugin-babel": "~4.4.6",
     "@vue/cli-plugin-eslint": "~4.4.6",
     "@vue/cli-plugin-router": "~4.4.6",
