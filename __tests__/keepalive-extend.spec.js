@@ -153,7 +153,7 @@ beforeEach(() => {
     {
       path: '/cart',
       name: 'cart',
-      component: () => import('./Cart.vue')
+      component: () => import('./Cart.js')
     }
   ]
 })
@@ -1500,7 +1500,7 @@ it('插槽中没有组件场景', () => {
   expect(vm.$el.textContent).toBe('has p')
 })
 
-it('异步组件', async () => {
+it('异步组件', (done) => {
   vm = new Vue({
     router,
     template: `
@@ -1511,12 +1511,13 @@ it('异步组件', async () => {
       </keepalive-extend>
     `,
     components: {
-      'my-component': () => import('./Cart.vue')
+      'my-component': () => import('./Cart.js')
     }
   }).$mount(el)
-  await vm.$nextTick(() => {
+  setTimeout(() => {
     expect(vm.$el.textContent).toBe('cart')
-  })
+    done()
+  }, 2000)
 })
 
 it('无插槽场景', async () => {
