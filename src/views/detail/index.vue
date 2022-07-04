@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  name: 'detail',
+  // name: 'detail',
 
   created () {
     console.log('created detail')

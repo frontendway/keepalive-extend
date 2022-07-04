@@ -14,3 +14,7 @@ export const fnCreatedCallsCount = (component) => {
 export const fnDestroyedCallsCount = (component) => {
   return component.destroyed.mock.calls.length
 }
+
+export const getHomeTitleContent = (el) => {
+  return querySelector('h3', el).textContent
+}
