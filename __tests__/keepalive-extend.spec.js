@@ -5,7 +5,8 @@ import {
   createElm,
   querySelector,
   fnCreatedCallsCount,
-  fnDestroyedCallsCount
+  fnDestroyedCallsCount,
+  getHomeTitleContent
 } from './utils.js'
 
 let Home = null
@@ -164,9 +165,9 @@ afterEach(() => {
 
 it(`
   1. 只配置 unique-key 场景
-  2. 渲染登录页面，登录页面 created 钩子被调用
+  2. 渲染 login 页，登录页面 created 钩子被调用
   3. 跳转到 home 页面，home 页面 created 钩子被调用
-  4. 返回登录页面，created 钩子不被调用
+  4. 缓存 login 和 home 页面
 `,
 async () => {
   router = new VueRouter({ routes })
@@ -186,15 +187,19 @@ async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/login')
   expect(vm.$el.textContent).toBe('login')
   expect(fnCreatedCallsCount(Login)).toBe(1)
+
+  await router.push('/home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
+  expect(fnCreatedCallsCount(Home)).toBe(1)
 })
 
-it('include 非字符串，数组，正则 场景', async () => {
+it('include 非 string regExp array 场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
@@ -213,7 +218,7 @@ it('include 非字符串，数组，正则 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/search')
@@ -221,7 +226,7 @@ it('include 非字符串，数组，正则 场景', async () => {
   expect(fnCreatedCallsCount(Search)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(2)
 
   await router.push('/login')
@@ -252,7 +257,7 @@ it('include string 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/search')
@@ -260,16 +265,12 @@ it('include string 场景', async () => {
   expect(fnCreatedCallsCount(Search)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/login')
   expect(vm.$el.textContent).toBe('login')
   expect(fnCreatedCallsCount(Login)).toBe(1)
-
-  await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
-  expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/search')
   expect(vm.$el.textContent).toBe('search')
@@ -295,7 +296,7 @@ it('include regExp 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/login')
@@ -303,7 +304,7 @@ it('include regExp 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(2)
 })
 
@@ -326,7 +327,7 @@ it('include array string 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/search')
@@ -334,7 +335,7 @@ it('include array string 场景', async () => {
   expect(fnCreatedCallsCount(Search)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/login')
@@ -344,14 +345,6 @@ it('include array string 场景', async () => {
   await router.push('/search')
   expect(vm.$el.textContent).toBe('search')
   expect(fnCreatedCallsCount(Search)).toBe(2)
-
-  await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
-  expect(fnCreatedCallsCount(Home)).toBe(1)
-
-  await router.push('/search')
-  expect(vm.$el.textContent).toBe('search')
-  expect(fnCreatedCallsCount(Search)).toBe(3)
 })
 
 it('include array regExp 场景', async () => {
@@ -373,7 +366,7 @@ it('include array regExp 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/search')
@@ -381,7 +374,7 @@ it('include array regExp 场景', async () => {
   expect(fnCreatedCallsCount(Search)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/search')
@@ -408,7 +401,7 @@ it('include array [string|regExp|array] 混合场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/search')
@@ -424,7 +417,7 @@ it('include array [string|regExp|array] 混合场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/search')
@@ -434,17 +427,9 @@ it('include array [string|regExp|array] 混合场景', async () => {
   await router.push('/detail')
   expect(vm.$el.textContent).toBe('detail')
   expect(fnCreatedCallsCount(Detail)).toBe(2)
-
-  await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
-  expect(fnCreatedCallsCount(Home)).toBe(1)
-
-  await router.push('/detail')
-  expect(vm.$el.textContent).toBe('detail')
-  expect(fnCreatedCallsCount(Detail)).toBe(3)
 })
 
-it('exclude 为非字符串，正则，数组场景', async () => {
+it('exclude 为非 string regExp array 场景', async () => {
   router = new VueRouter({ routes })
 
   await router.push('/login')
@@ -463,7 +448,7 @@ it('exclude 为非字符串，正则，数组场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/login')
@@ -471,7 +456,7 @@ it('exclude 为非字符串，正则，数组场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 })
 
@@ -494,7 +479,7 @@ it('exclude string 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/search')
@@ -502,7 +487,7 @@ it('exclude string 场景', async () => {
   expect(fnCreatedCallsCount(Search)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(2)
 
   await router.push('/login')
@@ -512,10 +497,6 @@ it('exclude string 场景', async () => {
   await router.push('/search')
   expect(vm.$el.textContent).toBe('search')
   expect(fnCreatedCallsCount(Search)).toBe(1)
-
-  await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
-  expect(fnCreatedCallsCount(Home)).toBe(3)
 })
 
 it('exclude regExp 场景', async () => {
@@ -537,7 +518,7 @@ it('exclude regExp 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/login')
@@ -545,12 +526,8 @@ it('exclude regExp 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(2)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
-
-  await router.push('/login')
-  expect(vm.$el.textContent).toBe('login')
-  expect(fnCreatedCallsCount(Login)).toBe(3)
 })
 
 it('exclude array string 场景', async () => {
@@ -572,7 +549,7 @@ it('exclude array string 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/search')
@@ -580,7 +557,7 @@ it('exclude array string 场景', async () => {
   expect(fnCreatedCallsCount(Search)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(2)
 
   await router.push('/login')
@@ -611,7 +588,7 @@ it('exclude array regExp 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/search')
@@ -619,7 +596,7 @@ it('exclude array regExp 场景', async () => {
   expect(fnCreatedCallsCount(Search)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(2)
 
   await router.push('/login')
@@ -650,7 +627,7 @@ it('exclude array [string|regExp|array] 混合场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/search')
@@ -666,7 +643,7 @@ it('exclude array [string|regExp|array] 混合场景', async () => {
   expect(fnCreatedCallsCount(Search)).toBe(2)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(2)
 
   await router.push('/login')
@@ -697,7 +674,7 @@ it('max', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/search')
@@ -739,7 +716,7 @@ it('rules refresh string 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/search')
@@ -747,7 +724,7 @@ it('rules refresh string 场景', async () => {
   expect(fnCreatedCallsCount(Search)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(2)
 
   await router.push('/detail')
@@ -755,7 +732,7 @@ it('rules refresh string 场景', async () => {
   expect(fnCreatedCallsCount(Detail)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(3)
 
   await router.push('/login')
@@ -763,7 +740,7 @@ it('rules refresh string 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(3)
 })
 
@@ -793,7 +770,7 @@ it('rules refresh regExp 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/detail')
@@ -801,7 +778,7 @@ it('rules refresh regExp 场景', async () => {
   expect(fnCreatedCallsCount(Detail)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(2)
 
   await router.push('/login')
@@ -809,7 +786,7 @@ it('rules refresh regExp 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(2)
 })
 
@@ -839,7 +816,7 @@ it('rules refresh array string 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/search')
@@ -847,7 +824,7 @@ it('rules refresh array string 场景', async () => {
   expect(fnCreatedCallsCount(Search)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(2)
 
   await router.push('/detail')
@@ -855,7 +832,7 @@ it('rules refresh array string 场景', async () => {
   expect(fnCreatedCallsCount(Detail)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(3)
 
   await router.push('/login')
@@ -863,7 +840,7 @@ it('rules refresh array string 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(3)
 })
 
@@ -893,7 +870,7 @@ it('rules refresh array regExp 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/search')
@@ -901,7 +878,7 @@ it('rules refresh array regExp 场景', async () => {
   expect(fnCreatedCallsCount(Search)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(2)
 
   await router.push('/detail')
@@ -909,7 +886,7 @@ it('rules refresh array regExp 场景', async () => {
   expect(fnCreatedCallsCount(Detail)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(3)
 
   await router.push('/login')
@@ -917,7 +894,7 @@ it('rules refresh array regExp 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(3)
 })
 
@@ -947,7 +924,7 @@ it('rules refresh array [string|regExp|array] 混合场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/search')
@@ -955,7 +932,7 @@ it('rules refresh array [string|regExp|array] 混合场景', async () => {
   expect(fnCreatedCallsCount(Search)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(2)
 
   await router.push('/detail')
@@ -963,7 +940,7 @@ it('rules refresh array [string|regExp|array] 混合场景', async () => {
   expect(fnCreatedCallsCount(Detail)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(3)
 
   await router.push('/shop')
@@ -971,7 +948,7 @@ it('rules refresh array [string|regExp|array] 混合场景', async () => {
   expect(fnCreatedCallsCount(Shop)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(4)
 
   await router.push('/login')
@@ -979,7 +956,7 @@ it('rules refresh array [string|regExp|array] 混合场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(4)
 })
 
@@ -1009,7 +986,7 @@ it('rules notRefresh string 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/detail')
@@ -1017,7 +994,7 @@ it('rules notRefresh string 场景', async () => {
   expect(fnCreatedCallsCount(Detail)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/search')
@@ -1025,7 +1002,7 @@ it('rules notRefresh string 场景', async () => {
   expect(fnCreatedCallsCount(Search)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/shop')
@@ -1033,7 +1010,7 @@ it('rules notRefresh string 场景', async () => {
   expect(fnCreatedCallsCount(Shop)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(2)
 
   await router.push('/login')
@@ -1041,69 +1018,7 @@ it('rules notRefresh string 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
-  expect(fnCreatedCallsCount(Home)).toBe(3)
-})
-
-it('rules notRefresh array 场景', async () => {
-  router = new VueRouter({ routes })
-
-  await router.push('/login')
-  vm = new Vue({
-    router,
-    template: `
-      <keepalive-extend
-        unique-key="app"
-        :rules="rules"
-      >
-        <router-view />
-      </keepalive-extend>
-    `,
-    data: () => ({
-      rules: {
-        home: {
-          notRefresh: ['detail', 'search']
-        }
-      }
-    })
-  }).$mount(el)
-  expect(vm.$el.textContent).toBe('login')
-  expect(fnCreatedCallsCount(Login)).toBe(1)
-
-  await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
-  expect(fnCreatedCallsCount(Home)).toBe(1)
-
-  await router.push('/detail')
-  expect(vm.$el.textContent).toBe('detail')
-  expect(fnCreatedCallsCount(Detail)).toBe(1)
-
-  await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
-  expect(fnCreatedCallsCount(Home)).toBe(1)
-
-  await router.push('/search')
-  expect(vm.$el.textContent).toBe('search')
-  expect(fnCreatedCallsCount(Search)).toBe(1)
-
-  await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
-  expect(fnCreatedCallsCount(Home)).toBe(1)
-
-  await router.push('/shop')
-  expect(vm.$el.textContent).toBe('shop')
-  expect(fnCreatedCallsCount(Shop)).toBe(1)
-
-  await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
-  expect(fnCreatedCallsCount(Home)).toBe(2)
-
-  await router.push('/login')
-  expect(vm.$el.textContent).toBe('login')
-  expect(fnCreatedCallsCount(Login)).toBe(1)
-
-  await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(3)
 })
 
@@ -1133,7 +1048,7 @@ it('rules notRefresh regExp 场景', async () => {
   expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/detail')
@@ -1141,7 +1056,7 @@ it('rules notRefresh regExp 场景', async () => {
   expect(fnCreatedCallsCount(Detail)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/search')
@@ -1149,24 +1064,194 @@ it('rules notRefresh regExp 场景', async () => {
   expect(fnCreatedCallsCount(Search)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(2)
+})
 
-  await router.push('/shop')
-  expect(vm.$el.textContent).toBe('shop')
-  expect(fnCreatedCallsCount(Shop)).toBe(1)
+it('rules notRefresh array string 场景', async () => {
+  router = new VueRouter({ routes })
+
+  await router.push('/login')
+  vm = new Vue({
+    router,
+    template: `
+      <keepalive-extend
+        unique-key="app"
+        :rules="rules"
+      >
+        <router-view />
+      </keepalive-extend>
+    `,
+    data: () => ({
+      rules: {
+        home: {
+          notRefresh: ['detail', 'search']
+        }
+      }
+    })
+  }).$mount(el)
+  expect(vm.$el.textContent).toBe('login')
+  expect(fnCreatedCallsCount(Login)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
-  expect(fnCreatedCallsCount(Home)).toBe(3)
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
+  expect(fnCreatedCallsCount(Home)).toBe(1)
 
   await router.push('/detail')
   expect(vm.$el.textContent).toBe('detail')
   expect(fnCreatedCallsCount(Detail)).toBe(1)
 
   await router.push('/home')
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
+  expect(fnCreatedCallsCount(Home)).toBe(1)
+
+  await router.push('/search')
+  expect(vm.$el.textContent).toBe('search')
+  expect(fnCreatedCallsCount(Search)).toBe(1)
+
+  await router.push('/home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
+  expect(fnCreatedCallsCount(Home)).toBe(1)
+
+  await router.push('/shop')
+  expect(vm.$el.textContent).toBe('shop')
+  expect(fnCreatedCallsCount(Shop)).toBe(1)
+
+  await router.push('/home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
+  expect(fnCreatedCallsCount(Home)).toBe(2)
+
+  await router.push('/login')
+  expect(vm.$el.textContent).toBe('login')
+  expect(fnCreatedCallsCount(Login)).toBe(1)
+
+  await router.push('/home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Home)).toBe(3)
+})
+
+it('rules notRefresh array regExp 场景', async () => {
+  router = new VueRouter({ routes })
+
+  await router.push('/login')
+  vm = new Vue({
+    router,
+    template: `
+      <keepalive-extend
+        unique-key="app"
+        :rules="rules"
+      >
+        <router-view />
+      </keepalive-extend>
+    `,
+    data: () => ({
+      rules: {
+        home: {
+          notRefresh: [/detail/, /search/]
+        }
+      }
+    })
+  }).$mount(el)
+  expect(vm.$el.textContent).toBe('login')
+  expect(fnCreatedCallsCount(Login)).toBe(1)
+
+  await router.push('/home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
+  expect(fnCreatedCallsCount(Home)).toBe(1)
+
+  await router.push('/detail')
+  expect(vm.$el.textContent).toBe('detail')
+  expect(fnCreatedCallsCount(Detail)).toBe(1)
+
+  await router.push('/home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
+  expect(fnCreatedCallsCount(Home)).toBe(1)
+
+  await router.push('/search')
+  expect(vm.$el.textContent).toBe('search')
+  expect(fnCreatedCallsCount(Search)).toBe(1)
+
+  await router.push('/home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
+  expect(fnCreatedCallsCount(Home)).toBe(1)
+
+  await router.push('/shop')
+  expect(vm.$el.textContent).toBe('shop')
+  expect(fnCreatedCallsCount(Shop)).toBe(1)
+
+  await router.push('/home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
+  expect(fnCreatedCallsCount(Home)).toBe(2)
+
+  await router.push('/login')
+  expect(vm.$el.textContent).toBe('login')
+  expect(fnCreatedCallsCount(Login)).toBe(1)
+
+  await router.push('/home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
+  expect(fnCreatedCallsCount(Home)).toBe(3)
+})
+
+it('rules notRefresh array [string|regExp|array] 混合场景', async () => {
+  router = new VueRouter({ routes })
+
+  await router.push('/login')
+  vm = new Vue({
+    router,
+    template: `
+      <keepalive-extend
+        unique-key="app"
+        :rules="rules"
+      >
+        <router-view />
+      </keepalive-extend>
+    `,
+    data: () => ({
+      rules: {
+        home: {
+          notRefresh: ['detail', /search/, ['shop']]
+        }
+      }
+    })
+  }).$mount(el)
+  expect(vm.$el.textContent).toBe('login')
+  expect(fnCreatedCallsCount(Login)).toBe(1)
+
+  await router.push('/home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
+  expect(fnCreatedCallsCount(Home)).toBe(1)
+
+  await router.push('/detail')
+  expect(vm.$el.textContent).toBe('detail')
+  expect(fnCreatedCallsCount(Detail)).toBe(1)
+
+  await router.push('/home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
+  expect(fnCreatedCallsCount(Home)).toBe(1)
+
+  await router.push('/search')
+  expect(vm.$el.textContent).toBe('search')
+  expect(fnCreatedCallsCount(Search)).toBe(1)
+
+  await router.push('/home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
+  expect(fnCreatedCallsCount(Home)).toBe(1)
+
+  await router.push('/shop')
+  expect(vm.$el.textContent).toBe('shop')
+  expect(fnCreatedCallsCount(Shop)).toBe(1)
+
+  await router.push('/home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
+  expect(fnCreatedCallsCount(Home)).toBe(1)
+
+  await router.push('/login')
+  expect(vm.$el.textContent).toBe('login')
+  expect(fnCreatedCallsCount(Login)).toBe(1)
+
+  await router.push('/home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
+  expect(fnCreatedCallsCount(Home)).toBe(2)
 })
 
 it('嵌套 keepalive-extend 不配置 keep-active 场景', async () => {
@@ -1189,7 +1274,7 @@ it('嵌套 keepalive-extend 不配置 keep-active 场景', async () => {
 
   await router.push('/home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Nav1)).toBe(1)
   expect(querySelector('.nav1', vm.$el).textContent).toBe('nav1')
 
@@ -1214,7 +1299,7 @@ it('嵌套 keepalive-extend 不配置 keep-active 场景', async () => {
 
   await router.push('/home')
   expect(fnCreatedCallsCount(Home)).toBe(2)
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Nav1)).toBe(2)
   expect(querySelector('.nav1', vm.$el).textContent).toBe('nav1')
 })
@@ -1258,7 +1343,7 @@ it('嵌套 keepalive-extend 配置 keep-active 场景', async () => {
 
   await router.push('/home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Nav1)).toBe(1)
   expect(querySelector('.nav1', vm.$el).textContent).toBe('nav1')
 
@@ -1282,7 +1367,7 @@ it('嵌套 keepalive-extend 配置 keep-active 场景', async () => {
 
   await router.push('/home')
   expect(fnCreatedCallsCount(Home)).toBe(2)
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Nav1)).toBe(1)
   expect(querySelector('.nav1', vm.$el).textContent).toBe('nav1')
 
@@ -1338,7 +1423,7 @@ it('嵌套 keepalive-extend 配置 keep-active，有 rules 场景', async () => 
 
   await router.push('/home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
   expect(fnCreatedCallsCount(Nav1)).toBe(1)
   expect(querySelector('.nav1', vm.$el).textContent).toBe('nav1')
 
@@ -1390,7 +1475,7 @@ it('watch include', async () => {
 
   await router.push('/home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
 
   await router.push('/login')
   expect(vm.$el.textContent).toBe('login')
@@ -1398,7 +1483,7 @@ it('watch include', async () => {
 
   await router.push('/home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
 
   await vm.$nextTick(() => {
     vm.include = 'login'
@@ -1410,7 +1495,7 @@ it('watch include', async () => {
 
   await router.push('/home')
   expect(fnCreatedCallsCount(Home)).toBe(2)
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
 
   await router.push('/login')
   expect(vm.$el.textContent).toBe('login')
@@ -1426,7 +1511,7 @@ it('watch include', async () => {
 
   await router.push('/home')
   expect(fnCreatedCallsCount(Home)).toBe(3)
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
 })
 
 it('destroyed 无 keepActive', async () => {
@@ -1448,7 +1533,7 @@ it('destroyed 无 keepActive', async () => {
 
   await router.push('/home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
 
   await vm.$destroy()
 
@@ -1477,7 +1562,7 @@ it('destroyed 有 keepActive', async () => {
 
   await router.push('/home')
   expect(fnCreatedCallsCount(Home)).toBe(1)
-  expect(querySelector('h3', vm.$el).textContent).toBe('home')
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
 
   await vm.$destroy()
 
@@ -1486,7 +1571,7 @@ it('destroyed 有 keepActive', async () => {
   expect(fnDestroyedCallsCount(Nav1)).toBe(0)
 })
 
-it('插槽中没有组件场景', () => {
+it('插槽中没有组件场景，只有普通元素标签', () => {
   vm = new Vue({
     router,
     template: `
@@ -1500,7 +1585,7 @@ it('插槽中没有组件场景', () => {
   expect(vm.$el.textContent).toBe('has p')
 })
 
-it('异步组件', (done) => {
+it('渲染异步组件', (done) => {
   vm = new Vue({
     router,
     template: `
@@ -1550,4 +1635,40 @@ it('手动给组件指定 key', async () => {
   }).$mount(el)
 
   expect(vm.$el.textContent).toBe('page')
+})
+
+it('othersCachedClean', async () => {
+  router = new VueRouter({ routes })
+
+  await router.push('/login')
+  vm = new Vue({
+    router,
+    template: `
+      <keepalive-extend
+        unique-key="app"
+        :rules="rules"
+      >
+        <router-view />
+      </keepalive-extend>
+    `,
+    data: () => ({
+      rules: {
+        othersCachedClean: true
+      }
+    })
+  }).$mount(el)
+  expect(vm.$el.textContent).toBe('login')
+  expect(fnCreatedCallsCount(Login)).toBe(1)
+
+  await router.push('/home')
+  expect(fnCreatedCallsCount(Home)).toBe(1)
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
+
+  await router.push('/login')
+  expect(vm.$el.textContent).toBe('login')
+  expect(fnCreatedCallsCount(Login)).toBe(2)
+
+  await router.push('/home')
+  expect(fnCreatedCallsCount(Home)).toBe(2)
+  expect(getHomeTitleContent(vm.$el)).toBe('home')
 })
