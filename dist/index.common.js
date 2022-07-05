@@ -1772,9 +1772,14 @@ const setPrevRouteName = name => {
   prevRouteName = name;
 };
 const isResetCacheKey = (rules, currentRouteName) => {
+  if (!rules) return false;
   let rule = null;
-  if (!rules || !currentRouteName || !prevRouteName) return false;
-  if (!(rule = rules[currentRouteName])) return false;
+
+  if (!(rule = rules[currentRouteName])) {
+    if (rules.othersCachedClean === true) return true;
+    return false;
+  }
+
   const {
     refresh,
     notRefresh
@@ -1806,8 +1811,15 @@ const patternTypes = [String, RegExp, Array];
 
   created() {
     const {
-      uniqueKey
+      uniqueKey,
+      rules,
+      $route
     } = this;
+
+    if (rules && !$route) {
+      console.warn('vue-router must be installed to use rules');
+    }
+
     const state = {
       cache: Object.create(null),
       keys: []
@@ -1846,11 +1858,11 @@ const patternTypes = [String, RegExp, Array];
   },
 
   mounted() {
-    this.$watch('include', val => {
-      pruneCache(this, name => matches(val, name));
+    this.$watch('include', newInclude => {
+      pruneCache(this, name => matches(newInclude, name));
     });
-    this.$watch('exclude', val => {
-      pruneCache(this, name => !matches(val, name));
+    this.$watch('exclude', newExclude => {
+      pruneCache(this, name => !matches(newExclude, name));
     });
   },
 
@@ -1872,7 +1884,8 @@ const patternTypes = [String, RegExp, Array];
 
       const {
         rules,
-        uniqueKey
+        uniqueKey,
+        $route
       } = this;
       const {
         cache,
@@ -1880,7 +1893,7 @@ const patternTypes = [String, RegExp, Array];
       } = getTargetMap(uniqueKey);
       const key = getVnodeKey(vnode, componentOptions);
 
-      if (isResetCacheKey(rules, name)) {
+      if ($route && isResetCacheKey(rules, name)) {
         cache[key] = null;
         remove(keys, key);
       }

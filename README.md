@@ -31,7 +31,6 @@ Vue.use(KeepaliveExtend)
 
 ### Component API
 ```html
-<!-- include,exclude,max consistent with that of keep-alive -->
 <keepalive-extend
   unique-key="app"
   :rules="{
@@ -57,11 +56,12 @@ Vue.use(KeepaliveExtend)
 |     max     |    consistent with that of keep-alive      | string or number |   false  |
 
 ### Rules Api
+- Vue router must be installed to use rules
 - Enter page1 page from Page2 or Page3 page, and page1 re renders
 ```js
 rules = {
   page1: {
-    refresh: 'page2,page3'
+    refresh: 'page2,page3',
     // notRefresh: 'page2,page3'
   }
 }
@@ -69,7 +69,7 @@ rules = {
 ```js
 rules = {
   page1: {
-    refresh: /paeg2|page3/
+    refresh: /paeg2|page3/,
     // notRefresh: /paeg2|page3/
   }
 }
@@ -77,18 +77,42 @@ rules = {
 ```js
 rules = {
   page1: {
-    refresh: ['page2', /page3/]
+    refresh: ['page2', /page3/],
+    // notRefresh: ['page2', /page3/]
     # or
     refresh: [['page2', /page3/]]
-    // notRefresh: ['page2', /page3/]
     // notRefresh: [['page2', /page3/]]
   }
 }
 ```
+- After opening, the page without configuration rules will be re rendered every time
+```js
+rules = {
+  page1: {refresh: 'page2'},
+  othersCachedClean: true // Other pages that are not page1 pages are re rendered every time
+}
+```
+
+### Example
+- The details page enters the list page, and the list page does not refresh
+- The non details page enters the list page, and the list page refreshes
+```html
+<keepalive-extend
+  unique-key="app"
+  include="list"
+  :rules="{
+    list: {
+      notRefresh: 'detail',
+      refresh: /[^detail]/
+    }
+  }"
+>
+  <router-view />
+</keepalive-extend>
+```
 
 ### Remind
 - The component name must be consistent with the name in the routing configuration
-- Name attribute must be configured
 ```js
 # ./src/page1.vue
 <script>
