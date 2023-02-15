@@ -4,6 +4,7 @@
     <div class="content-outer">
       <keepalive-extend
         unique-key="home"
+        :keep-active="true"
       >
         <router-view />
       </keepalive-extend>

@@ -3,6 +3,7 @@
     <keepalive-extend
       unique-key="app"
       :rules="rules"
+      exclude="home"
     >
       <router-view />
     </keepalive-extend>
@@ -26,9 +27,10 @@ export default {
       name: 'Detail',
       rules: {
         search: {
-          refresh: 'login',
+          refresh: /[^detail]/,
           notRefresh: 'detail'
-        }
+        },
+        othersCachedClean: true
       }
     }
   },
